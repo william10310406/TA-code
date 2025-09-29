@@ -42,6 +42,19 @@ def result():
     return render_template("result.html")
 
 
+@app.route("/example")
+def example():
+    # iPhone 範例頁面 - 展示進階的 CSS 動畫效果
+    return render_template("example.html")
+
+
+@app.route("/introduction")
+def introduction():
+    # 從 iPhone 頁面點擊按鈕後跳轉到這裡
+    # 可以建立一個介紹頁面，或重導向到首頁
+    return redirect("/")
+
+
 if __name__ == "__main__":
     # debug=True 代表開發模式，修改程式後會自動重啟伺服器，並顯示錯誤訊息
     app.run(debug=True)
