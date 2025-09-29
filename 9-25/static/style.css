@@ -1,0 +1,86 @@
+/*
+  這是網站的樣式表（CSS）。
+  CSS 用來決定畫面「長什麼樣子」，例如顏色、字體、間距等。
+  我們先定義一些變數（自訂屬性）方便統一管理主題色彩。
+*/
+:root {
+  --brand: #2b6cb0;
+  --bg: #f7fafc;
+  --text: #1a202c;
+  --muted: #718096;
+  --card: #ffffff;
+  --border: #e2e8f0;
+}
+
+/* 讓元素計算寬高時把邊框算進去，排版比較直覺 */
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
+  color: var(--text);
+  background: var(--bg);
+}
+
+/* 頁面上方的導覽列 */
+.nav {
+  background: var(--brand);
+  color: white;
+  padding: 12px 16px;
+  display: flex;
+  gap: 12px;
+}
+.nav a { color: white; text-decoration: none; }
+.nav a:hover { text-decoration: underline; }
+
+/* 置中主要內容，限制最大寬度讓閱讀更舒適 */
+.container {
+  max-width: 800px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+h1 { margin-top: 0; }
+
+/* 按鈕的基本樣式 */
+.btn {
+  display: inline-block;
+  background: var(--brand);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+.btn:hover { filter: brightness(0.95); }
+
+/* 有邊框和圓角的卡片區塊 */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+/* 表單裡的每個 label 獨佔一行並留間距 */
+form.card label {
+  display: block;
+  margin-bottom: 12px;
+}
+input[type="text"] {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+/* 頁尾的字顏色較淡並置中 */
+.footer {
+  margin: 24px 0;
+  text-align: center;
+  color: var(--muted);
+}
+
+

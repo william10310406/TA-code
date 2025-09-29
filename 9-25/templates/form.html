@@ -1,0 +1,35 @@
+<!doctype html>
+<!-- 表單頁面：純 HTML 檔案 -->
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>表單 - Flask + HTML 範例</title>
+    <link rel="stylesheet" href="/static/style.css">
+  </head>
+  <body>
+    <nav class="nav">
+      <a href="/">首頁</a>
+      <a href="/hello/">Hello</a>
+      <a href="/form">Form</a>
+    </nav>
+    <main class="container">
+      <h1>表單送出範例</h1>
+      <!-- method="post" 代表按下送出時，用 POST 把資料送到後端的 /form -->
+      <form method="post" action="/form" class="card">
+        <label>
+          名字：
+          <input type="text" name="name" placeholder="請輸入名字">
+        </label>
+        <label>
+          最喜歡的顏色（HEX）：
+          <input type="text" name="color" placeholder="#2b6cb0">
+        </label>
+        <button type="submit" class="btn">送出</button>
+      </form>
+    </main>
+    <footer class="footer">Flask 教學示例 · 9-25</footer>
+  </body>
+</html>
+
+
