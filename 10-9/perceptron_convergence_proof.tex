@@ -1,0 +1,195 @@
+%%%%%%%%%%%%%% perceptron_convergence_proof.tex %%%%%%%%%%%%%%
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{enumitem}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\setmainfont{Times New Roman}
+% 使用系統預設中文字體：
+\setCJKmainfont{PingFang TC}
+\linespread{1.2}
+\setlength{\parskip}{6pt}
+
+% ---------- theorem styles ----------
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+% ---------- macros ----------
+\newcommand{\inner}[2]{\left\langle #1,\, #2 \right\rangle}
+\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\R}{\mathbb{R}}
+
+\title{\textbf{Perceptron Convergence Theorem}\\
+\large (Rosenblatt early form, without learning rate)\\
+\normalsize 嚴謹證明與幾何詮釋（含連續版本）}
+\author{ }
+\date{ }
+
+\begin{document}
+\maketitle
+
+\noindent\textbf{導讀（Zh-TW）.}
+本文以早期文獻的表述重建「感知機收斂定理」的嚴謹證明：假設資料在有限維歐幾里得空間
+中可由一個閾值為 \(\theta>0\) 的超平面嚴格分開，則使用「錯誤修正法」更新權重，更新次數必為有限，
+因而演算法在有限步後停止（收斂）。我們先給出離散版核心證明，接著給出連續對應（作為直覺類比），
+最後以凸錐（cone）與對偶錐（dual cone）給出幾何詮釋。全文證明部分以 English 撰寫，避免邏輯歧義；
+中文僅作註釋與說明。全程\textbf{不使用學習率}，完全對應早期敘述。
+
+\section{Setting and Notation}
+Let \(w_1,\dots,w_N\in\R^m\) be a finite set of nonzero vectors. Assume there exists
+a vector \(y\in\R^m\) and a threshold \(\theta>0\) such that
+\begin{equation}\label{sep}
+  \inner{w_i}{y}>\theta \qquad\text{for all } i=1,\dots,N.
+\end{equation}
+Consider a (possibly infinite) training sequence in which each \(w_i\) occurs infinitely often.
+Let \(v_0\in\R^m\) be arbitrary. The perceptron with \emph{error-correction} update is:
+when the current sample is \(w\) and \(\inner{v}{w}\le\theta\) (mistake or not confident enough),
+set \(v\gets v+w\); otherwise keep \(v\) unchanged.
+
+As is classical (and done in Rosenblatt's derivation), it suffices to restrict attention to the
+subsequence of \emph{actual updates}. Index these updates by \(n=1,2,\dots\), and denote the
+misclassified sample at step \(n\) by \(w_n\in\{w_1,\dots,w_N\}\). Then
+\begin{equation}\label{update}
+  v_n = v_{n-1}+w_n,\qquad \inner{v_{n-1}}{w_n}\le \theta \quad (n\ge1).
+\end{equation}
+Define \(M:=\max_i \norm{w_i}^2\).
+
+\begin{remark}[中文註解]
+我們只保留「真的有更新」的步驟，不會影響是否收斂的結論。
+以上兩式正是早期文獻在簡化後使用的核心不等式。
+\end{remark}
+
+\section{Discrete Perceptron Convergence Theorem}
+\begin{theorem}[Discrete form]\label{thm:discrete}
+Suppose \eqref{sep} holds for some \(y\) and \(\theta>0\).
+Then the update rule \eqref{update} can occur only finitely many times.
+Equivalently, there exists \(m<\infty\) such that \(v_n=v_m\) for all \(n\ge m\).
+\end{theorem}
+
+\begin{proof}
+First, by \eqref{sep} and \eqref{update},
+\begin{equation}\label{y-growth}
+  \inner{v_n}{y}=\inner{v_{n-1}}{y}+\inner{w_n}{y}
+  > \inner{v_{n-1}}{y}+\theta,
+\end{equation}
+hence, inductively,
+\begin{equation}\label{linear-lower}
+  \inner{v_n}{y} \ge \inner{v_0}{y} + n\theta \qquad (n\ge1).
+\end{equation}
+By Cauchy--Schwarz,
+\(
+  \inner{v_n}{y}^2 \le \norm{v_n}^2\norm{y}^2
+\),
+so \eqref{linear-lower} implies the \emph{quadratic} lower bound
+\begin{equation}\label{quad-lb}
+  \norm{v_n}^2 \;\ge\; \dfrac{(\inner{v_0}{y}+n\theta)^2}{\norm{y}^2}.
+\end{equation}
+
+On the other hand, expanding the difference of squared norms and using \eqref{update},
+\[
+  \norm{v_n}^2-\norm{v_{n-1}}^2
+  = 2\,\inner{v_{n-1}}{w_n} + \norm{w_n}^2
+  \le 2\theta + M.
+\]
+Summing from \(1\) to \(n\) yields the \emph{linear} upper bound
+\begin{equation}\label{lin-ub}
+  \norm{v_n}^2 \;\le\; \norm{v_0}^2 + (2\theta+M)\,n.
+\end{equation}
+
+Combining \eqref{quad-lb} and \eqref{lin-ub} we obtain, for every \(n\) at which an update occurs,
+\begin{equation}\label{quad-incompat}
+  \dfrac{(\inner{v_0}{y}+n\theta)^2}{\norm{y}^2}\;\le\; \norm{v_0}^2 + (2\theta+M)\,n.
+\end{equation}
+The left-hand side is quadratic in \(n\) with leading coefficient \(\theta^2/\norm{y}^2>0\),
+while the right-hand side is affine in \(n\). Hence \eqref{quad-incompat} cannot hold for all
+integers \(n\). In particular, let \(T\) be the larger real root of the quadratic equality obtained from
+\eqref{quad-incompat}; then \emph{no} update can occur for any integer \(n>T\).
+Consequently the number of updates is finite, and the process must terminate.
+\end{proof}
+
+\begin{remark}[Explicit bound]
+Writing out the larger root gives an explicit (though notationally heavy) bound
+\[
+  T \;=\; \frac{ \norm{y}^2(2\theta+M) - 2\theta\,\inner{v_0}{y}
+         + \sqrt{\big(\norm{y}^2(2\theta+M)-2\theta\,\inner{v_0}{y}\big)^2
+         - 4\theta^2\big(\inner{v_0}{y}^2-\norm{y}^2\norm{v_0}^2\big)} }{2\theta^2},
+\]
+hence the total number of updates is at most \(\lceil T\rceil\).
+\end{remark}
+
+\section{Continuous Analog (for intuition)}
+Consider a smooth curve \(v:[0,b)\to\R^m\) such that for some fixed \(y\) and constants
+\(c>0\), \(\theta\in\R\),
+\begin{equation}\label{cont1}
+  \inner{\dot v(t)}{y}\ge c \quad\text{for } 0\le t<b,
+\end{equation}
+\begin{equation}\label{cont2}
+  \frac12\frac{d}{dt}\norm{v(t)}^2=\inner{v(t)}{\dot v(t)}\le \theta \quad (0\le t<b).
+\end{equation}
+Integrating \eqref{cont1} gives \(\inner{v(t)}{y}\ge \inner{v(0)}{y}+ct\).
+Cauchy--Schwarz then yields
+\(\norm{v(t)}^2 \ge \{ \inner{v(0)}{y}+ct\}^2/\norm{y}^2\).
+Integrating \eqref{cont2} gives \(\norm{v(t)}^2\le 2\theta t+\norm{v(0)}^2\).
+As in the discrete case, the resulting quadratic vs.\ linear growth are incompatible for large \(t\);
+hence \(t\) is bounded above. This provides a faithful continuous analog of the discrete proof.
+
+\section{Geometric Interpretation via Cones}
+Define the (finitely generated) convex cone
+\[
+  C:=\Big\{ \sum_{i=1}^N \lambda_i w_i \;\Big|\; \lambda_i\ge0\Big\},
+\]
+and its dual cone
+\[
+  C^*:=\{ v\in\R^m : \inner{w_i}{v}\ge0 \text{ for all } i\}.
+\]
+\begin{proposition}\label{prop:cone}
+The separability condition \eqref{sep} holds for some \(y\) and \(\theta>0\)
+if and only if the dual cone \(C^*\) has nonempty interior (equivalently, \(C\) is a proper cone).
+\end{proposition}
+\begin{proof}[Proof sketch]
+(\(\Rightarrow\)) If \(\inner{w_i}{y}>\theta>0\) for all \(i\), then in particular
+\(\inner{w_i}{y}>0\); hence \(y\in\mathrm{int}(C^*)\).
+(\(\Leftarrow\)) If \(y\in\mathrm{int}(C^*)\), then
+\(\min_{1\le i\le N}\inner{w_i}{y}=:m>0\). For any \(\theta\in(0,m)\),
+\eqref{sep} holds. The equivalence to \(C\) being proper is standard:
+\(C\) is proper (pointed) iff \(C^*\) has nonempty interior.
+\end{proof}
+
+\begin{remark}[Error-correction as a constructive path into \(C^*\)]
+The update sequence \(v_n=\sum_{i=1}^N k_i w_i\) (with integers \(k_i\ge0\) counting updates
+on each \(w_i\)) can be viewed as a recursive construction steering \(v_n\) toward
+\(\mathrm{int}(C^*)\). Prioritizing samples \(w\) that are ``closest'' to \(\mathrm{int}(C^*)\)
+(and of larger norm) accelerates termination—this echoes margin-based heuristics in modern treatments.
+\end{remark}
+
+\section{Auxiliary Lemmas (Completeness)}
+\begin{lemma}[Cauchy--Schwarz]
+For all \(u,v\in\R^m\), \(|\inner{u}{v}|\le \norm{u}\,\norm{v}\).
+\end{lemma}
+\begin{lemma}[Quadratic vs.\ affine dominance]
+Let \(a>0\), \(b,c\in\R\). The inequality \(a n^2 + b n + c \le \alpha n + \beta\) cannot hold for all integers \(n\).
+\end{lemma}
+\begin{proof}
+Rearranging gives a quadratic with positive leading coefficient; such a polynomial tends to \(+\infty\),
+contradicting the affine upper bound for large \(n\).
+\end{proof}
+
+\section{Concluding Notes}
+The proof of \Cref{thm:discrete} requires neither step size parameters nor stochastic assumptions;
+it only uses: (i) strict separability \eqref{sep}, (ii) the update subsequence \eqref{update},
+(iii) Cauchy--Schwarz, and (iv) a simple telescoping bound on squared norms.
+Hence it matches the early perceptron convergence theorem in spirit and logic.
+
+\bigskip
+\noindent\textbf{Keywords:} Perceptron, error-correction, convergence, convex cone, dual cone, separability.
+
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

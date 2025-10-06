@@ -11,7 +11,7 @@ def index():
     # 當使用者造訪根目錄「/」時，回傳 templates/index.html 這個 HTML 檔案
     # render_template 會到 templates/ 資料夾找同名檔案，並把它回傳給瀏覽器
     return render_template("index.html")
-
+－
 
 @app.route("/hello/")
 @app.route("/hello/<name>")
